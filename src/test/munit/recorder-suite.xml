@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="recorder-suite.xml" />
+	<munit:test name="flow-to-be-tested-test" doc:id="aac8ccdb-9cd0-4f09-a69e-7bb5b1abe3a6" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Object Store (to be mocked)" doc:id="09620566-1887-43e6-9e97-19a91e1667bc" processor="os:store">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="1d79f1ee-20e7-45de-b384-9b0b31f423cf" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://flowtobetestedtest\mock_payload.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://flowtobetestedtest\mock_attributes.dwl')]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:spy doc:name="Spy Transform Message (to be spied)" doc:id="26c3f66b-650f-45b0-80c0-13ded9c28c85" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ace83707-60a0-44c5-9d56-3c29e29a4091" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="edb7bd4a-8733-45f4-aba0-619a3a24dc5d" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import flowtobetestedtest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="66ed2585-52b7-4ea6-a2e8-268b388eb3d1" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import flowtobetestedtest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="084d4dfe-82c3-407d-a727-8358269b832c" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://flowtobetestedtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://flowtobetestedtest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to flow-to-be-tested" doc:id="cdc484b4-87ee-4ecc-a643-a79d14ffb848" name="flow-to-be-tested"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="fdc75d61-c385-4c44-8755-69f6c2fe56e0" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import flowtobetestedtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Set SUCCESS (to be verified)" doc:id="4e4e2c97-0383-484d-83ed-67942f81b029" processor="set-payload" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="dab4ca38-b1c6-4ca2-aeae-7421ce4f7ccf" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Transform Message (to be spied)" doc:id="4c8ff6a6-7983-4a8a-974c-d01752f79e43" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ace83707-60a0-44c5-9d56-3c29e29a4091" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

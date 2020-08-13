@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:dbserver="http://www.mulesoft.org/schema/mule/dbserver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/dbserver http://www.mulesoft.org/schema/mule/dbserver/current/mule-dbserver.xsd
+">
+	<munit:config name="playground-test-suite.xml" />
+	<dbserver:config name="MUnit_DB_Server_Config" doc:name="MUnit DB Server Config" doc:id="3d098bab-82f8-4cab-89f3-e0bff6a5a250" >
+		<dbserver:connection csv="contacts.csv" database="TestDB" />
+	</dbserver:config>
+	<db:config name="Test_Database" doc:name="Database Config" doc:id="b0f78e77-4a88-4fc5-b291-32834e89e528" >
+		<db:generic-connection url="jdbc:h2:tcp://localhost/mem:TestDB" driverClassName="org.h2.Driver" />
+	</db:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="7e443033-f4f8-4683-8131-4739e5f4bc66" file="db.properties" />
+	<munit:test name="playground-test-suite-playgroundFlowTest" doc:id="743ccaf6-8386-4464-bda5-65139b2509d1" description="Test">
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to playgroundFlow" doc:id="de768206-f734-4d4e-b1c5-2301c9cec8ae" name="playgroundFlow"/>
+		</munit:execution>
+	</munit:test>
+
+
+</mule>
